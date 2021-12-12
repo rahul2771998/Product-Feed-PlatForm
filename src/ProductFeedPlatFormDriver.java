@@ -20,82 +20,92 @@ public class ProductFeedPlatFormDriver {
         {
 
             String str=sc.nextLine();
-            System.out.println(str);
+            //System.out.println(str);
 
             String arr[]=str.split(" ");
-            if(arr[0].equalsIgnoreCase("Add"))
+            if(arr[0].equalsIgnoreCase("Create"))
             {
-                if(arr[1].equalsIgnoreCase("User"))
+                if(arr[1].equalsIgnoreCase("Customer"))
                 {
                     // Add User user1 email 272616271
                     //String userId, String name, String email, Long phone
                     Long phone=Long.valueOf(arr[5]);
-                    UserCreationResponse uResponse=service.addUser(arr[2],arr[3],arr[4],phone);
+                    CreateCustomerResponse response=CustomerService.createCustomer(arr[2],arr[3],arr[4],phone,arr[6]);
 
-                    System.out.println(uResponse.getMessage());
+                    System.out.println(response.getMessg());
 
                 }
 
-                else if(arr[1].equalsIgnoreCase("Song"))
+                else if(arr[1].equalsIgnoreCase("Seller"))
                 {
-                    if(arr[2].equalsIgnoreCase("To") && arr[3].equalsIgnoreCase("PlayList"))
-                    {
-                        // Add Song To PlayList song1 playList1
-                        AddSongToPlayListResponse response=service.addSongsToPlayList(arr[4],arr[5]);
-                        System.out.println(response.getMessage());
+                    Long phone=Long.valueOf(arr[5]);
+                    CreateSellerResponse response=SellerService.createSeller(arr[2],arr[3],arr[4],phone,arr[6]);
 
-                    }
-                    else {
-                        // Add Song songId name genre singer tempo
-                        AddSongResponse response=service.addSong(arr[2], arr[3], arr[4], arr[5], Integer.parseInt(arr[6]));
-                        System.out.println(response.getMessage());
-                    }
+                    System.out.println(response.getMssg());
+
                 }
 
-                else if(arr[1].equalsIgnoreCase("Friend"))
+                else if(arr[1].equalsIgnoreCase("post"))
                 {
-                    // Add Friend user1 user2
-                    AddFriendResponse response= service.addFriend(arr[2],arr[3]);
-                    System.out.println(response.getMessage());
+                    // Add Friend user1 user2//String postId,String dateTime,String productId,String publishedBy
+                    AddPostResponse response= SellerService.addPost(arr[2],arr[3],arr[4],arr[5]);
+                    System.out.println(response.getMessg());
 
                 }
             }
-            else if(arr[0].equalsIgnoreCase("Create"))
+            else if(arr[0].equalsIgnoreCase("Add"))
             {
-                if(arr[1].equalsIgnoreCase("PlayList"))
+                if(arr[1].equalsIgnoreCase("Product"))
                 {
-                    // Create PlayList userId playListId songIds
-                    List<String>songsIds=new ArrayList<>();
-                    for(int i=4;i<arr.length;i++)
-                        songsIds.add(arr[i]);
-
-                    CreatePlayListResponse response= service.createPlayList(arr[2],arr[3],songsIds);
-                    System.out.println(response.getMessage());
+                    //String id, String name, double price, String category, String addedBy
+                    Double price=Double.parseDouble(arr[4]);
+                    AddProductResponse response=SellerService.addProduct(arr[2],arr[3],price,arr[5],arr[6]);
+                    System.out.println(response.getMessg());
 
 
                 }
             }
-
-            else if(arr[0].equalsIgnoreCase("Show") && arr[1].equalsIgnoreCase("PlayList"))
+            else if(arr[0].equalsIgnoreCase("Delete"))
             {
-                // Show PlayList userId playListId
-                service.showPlayList(arr[2],arr[3]);
+                List<String> postIds=new ArrayList<>();
+                if(arr[1].equalsIgnoreCase("Posts"))
+                {
+                    for(int i=3;i<arr.length;i++)
+                        postIds.add(arr[i]);
+                    DeletePostResponse response =SellerService.deletePost(arr[2],postIds);
+                    System.out.println(response.getMessg());
+                }
             }
-            else if(arr[0].equalsIgnoreCase("Follow"))
+            else if(arr[0].equalsIgnoreCase("Subscribe") && arr[1].equalsIgnoreCase("Seller"))
             {
-                // Follow userId1 To userId2
-                FollowFriendResponse response=service.follow(arr[1],arr[3]);
-                System.out.println(response.getMessage());
-
+                SubscribeToSellerResponse response =CustomerService.subscribeToSeller(arr[2],arr[3]);
+                System.out.println(response.getMessg());
             }
-            else if(arr[0].equalsIgnoreCase("Recommend"))
+            else if(arr[0].equalsIgnoreCase("DeSubscribe") && arr[1].equalsIgnoreCase("Seller"))
             {
-                // Recommend Songs userId
-
-                service.recommendSongs(arr[2]);
-
+               DesubscribeToSellerResponse response =CustomerService.desubscribeToSeller(arr[2],arr[3]);
+                System.out.println(response.getMessg());
+            }
+            else if(arr[0].equalsIgnoreCase("UpVote") && arr[1].equalsIgnoreCase("Post"))
+            {
+                CustomerUpvotePostResponse response=CustomerService.customerUpvotePost(arr[2],arr[3]);
+                System.out.println(response.getMssg());
+            }
+            else if(arr[0].equalsIgnoreCase("DownVote") && arr[1].equalsIgnoreCase("Post"))
+            {
+                CustomerDownvotePostResponse response=CustomerService.customerDownvotePost(arr[2],arr[3]);
+                System.out.println(response.getMssg());
+            }
+            else if(arr[0].equalsIgnoreCase("Customer") && arr[1].equalsIgnoreCase("Fetch")&& arr[2].equalsIgnoreCase("Posts") && arr[3].equalsIgnoreCase("Recency"))
+            {
+                FeedService.fetchPostsByRecency(arr[4]);
+            }
+            else if(arr[0].equalsIgnoreCase("Customer") && arr[1].equalsIgnoreCase("Fetch")&& arr[2].equalsIgnoreCase("Posts") && arr[3].equalsIgnoreCase("Seller")&& arr[4].equalsIgnoreCase("Rating"))
+            {
+                FeedService.fetchPostsBySellerRating(arr[5]);
             }
 
+            
 
 
             t-=1;
@@ -108,23 +118,3 @@ public class ProductFeedPlatFormDriver {
 
 
 
-// Add User user1 email 272616271
-// Add Song songId name genre singer tempo
-//Create PlayList user1 playList1 song1 song2 song3
-// Add Song To PlayList playList1 song4
-// Show PlayList userId playListId
-// Add Friend user1 user2
-// Follow userId1 To userId2
-// Recommend Songs userId
-
-
-//1.Add User user1 Rahul abc@tila.com 92382937
-//2.Add User user2 Mohit XYZ@tila.com 38929032
-//3.Add User user3 Nitish abxaj@email.com 38210378
-//4.Add Friend user1 user2
-//5.Follow user1 To user3
-//6.Add Song song8 song8 Folk AB 60
-//7.Create PlayList user1 playList1 song1 song2 song3
-//8.Add Song To PlayList playList1 song4
-//9.Show PlayList user1 playList1
-//10.Recommend Songs user1
